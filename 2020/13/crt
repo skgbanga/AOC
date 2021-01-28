@@ -1,0 +1,48 @@
+Let's start with two element version of chinese remainder theorem:
+
+we have two numbers: n1 and n2
+and we have two remainders r1 and r2
+
+
+we want a t such that when t is dvidied by n1 the remainder is r1 and when t is divided by n2, the remainder is r2
+(chinese remainder theorem basically says that such a t exists if n1 and n2 are gcd = 1)
+
+
+So if the bus sequences are [17,x,13]
+
+then let's consider 17 and 13 first.
+We want a t such that:
+
+1. 17 divides t
+2. 13 divides t + 2
+
+hence for crt perspective
+n1 = 17, n2 = 13
+r1 = 0, r2 = -2
+
+
+Let's say this is your initial sequence of buses:
+7,13,x,x,59,x,31,19
+
+First step is to make a dictionary like this:
+
+d = {
+7 : 0,
+13 : 1,
+59 : 4,
+31 : 6,
+19 : 7
+}
+
+Now you want to find a t such that:
+
+for key, value in d:
+  (t + value) % key == 0
+
+
+This is our main problem
+
+Now 7, 13, 59, 31, 19 become n1, n2 ... 
+0, -1, -4, -6, -7 become r1, r2, r2...
+
+of chinese remainder theorem

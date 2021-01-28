@@ -1,0 +1,50 @@
+# from collections import deque
+# nums = [14,3,1,0,9,5]
+
+# seen = {}
+
+# def update(last, turn):
+#     if last in seen:
+#         cnt, xs = seen[last]
+#         xs.append(turn)
+#         seen[last] = (cnt + 1, xs)
+#     else:
+#         d = deque(maxlen=2)
+#         d.append(turn)
+#         seen[last] = (1, d)
+
+# for turn, last in enumerate(nums, start=1):
+#     update(last, turn)
+
+
+# while turn < 30000000:
+#     turn += 1
+#     cnt, when = seen[last]
+#     if cnt == 1:
+#         last = 0
+#         update(last, turn)
+#     else:
+#         last = when[1] - when[0]
+#         update(last, turn)
+
+
+# print(last)
+
+
+nums = [14, 3, 1, 0, 9, 5]
+
+seen = {}
+for idx, num in enumerate(nums, start=1):
+    seen[num] = idx
+
+n = 0
+for i in range(idx + 1, 2020):
+    c = n
+    if n in seen:
+        n = i - seen[n]
+    else:
+        n = 0
+    seen[c] = i
+
+print(n)
+print(len(seen))

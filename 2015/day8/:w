@@ -1,0 +1,45 @@
+full = [line.strip('\n') for line in open('input2', 'r')]
+real = [line.strip()[1:-1] for line in open('input2', 'r', encoding='unicode_escape')]
+
+b = sum(len(line) for line in full)
+c = sum(len(line) for line in real)
+
+print(b, c, b - c)
+
+# part1
+new = []
+for r in full:
+    r = r[1:-1]
+    x = ""
+    ignore = False
+    for c in r:
+        if c == '\\' and not ignore:
+            ignore = True
+        else:
+            ignore = False
+            x += c
+    new.append(x)
+
+s = sum(len(line) for line in new)
+for line in new:
+    print(line)
+print(b, s, b - s)
+
+
+
+# part2
+new = []
+for r in full:
+    x = ""
+    for c in r:
+        if c == '\"':
+            x += '\\' + '\"'
+        elif c == "\\":
+            x += "\\" + "\\"
+        else:
+            x += c
+    new.append(x)
+
+
+s = sum(len(line) for line in new) + len(new) * 2
+print(s, b, s - b)
