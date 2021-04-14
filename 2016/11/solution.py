@@ -1,30 +1,40 @@
+from collections import namedtuple
 from copy import deepcopy
+from itertools import combinations
 
 floors = 4
-n = 5
+pairs = 5
 
 class Floor:
-    def __init__(self, n):
-        self.gens  = [0] * n
-        self.chips = [0] * n
+    def __init__(self, gens, chips):
+        self.gens = gens
+        self.chips = chips
 
-    def valid(self):
-        for i, chip in enumerate(self.chips):
-            if not chip:
-                continue
-
-            if self.gens[i]:
-                continue
-
-            # we have a chip on this floor which doesn't have a generator
-            # on the same floor. make sure there is no other generator
-            if sum(self.gens) != 0:
-                return False
-
-        return True
+    def __hash__(self):
+        return hash((tuple(sorted(self.gens)), tuple(sorted(self.chips))))
 
     def __eq__(self, other):
         return self.gens == other.gens and self.chips == other.chips
+
+class Building:
+    def __init__(self):
+        self.floors = [Floor(set(), set()) for _ in range(floors)]
+        self.prev = None
+
+    def __hash__(self):
+        return hash(tuple(self.floors))
+
+    def __eq__(self, other):
+        return self.floors == other.floors
+
+def valid_floor(floor):
+    for chip in floor.chips:
+        if chip in floor.gens:
+            continue
+        if len(floor.gens) != 0:  # there should not be any generator
+            return False
+
+    return True
 
 class Change:
     def __init__(self):
@@ -39,139 +49,168 @@ class Change:
 
 def possible(floor):
     # pick two gens
-    if sum(floor.gens) >= 2:
-        for i in range(n):
-            if not floor.gens[i]:
-                continue
-            for j in range(i + 1, n):
-                c = Change()
-                c.gens.extend([i, j])
-                yield c
+    if len(floor.gens) >= 2:
+        for i, j in combinations(floor.gens, 2):
+            c = Change()
+            c.gens.extend([i, j])
+            yield c
 
     # pick one gen
-    if sum(floor.gens):
-        for i in range(n):
-            if not floor.gens[i]:
-                continue
+    if floor.gens:
+        for i in floor.gens:
             c = Change()
             c.gens.append(i)
             yield c
 
     # pick two chips
-    if sum(floor.chips) >= 2:
-        for i in range(n):
-            if not floor.chips[i]:
-                continue
-            for j in range(i + 1, n):
-                c = Change()
-                c.chips.extend([i, j])
-                yield c
+    if len(floor.chips) >= 2:
+        for i, j in combinations(floor.chips, 2):
+            c = Change()
+            c.chips.extend([i, j])
+            yield c
 
     # pick one chip
-    if sum(floor.chips):
-        for i in range(n):
-            if not floor.chips[i]:
-                continue
+    if floor.chips:
+        for i in floor.chips:
             c = Change()
             c.chips.append(i)
             yield c
 
     # pick one chip and one gen
-    if sum(floor.gens) and sum(floor.chips):
-        for i, gen in enumerate(floor.gens):
-            for j, chip in enumerate(floor.chips):
-                if gen and chip:
-                    c = Change()
-                    c.gens.append(i)
-                    c.chips.append(j)
-                    yield c
+    if floor.gens and floor.chips:
+        for gen in floor.gens:
+            for chip in floor.chips:
+                if gen != chip:
+                    continue
 
+                c = Change()
+                c.gens.append(gen)
+                c.chips.append(chip)
+                yield c
 
 def end(building):
-    top = building[-1]
-    return sum(top.gens) == n and sum(top.chips) == n
+    top = building.floors[-1]
+    return len(top.gens) == pairs and len(top.chips) == pairs
 
-
-def valid(state):
-    return all(floor.valid() for floor in state)
+def valid_building(building):
+    return all(valid_floor(floor) for floor in building.floors)
 
 def apply(current, change):
-    new = deepcopy(current)
+    # new = deepcopy(current)
+
+    new = Building()
+    new.prev = (change.fro, current)
+    for floor in range(floors):
+        new.floors[floor].gens.update(current.floors[floor].gens)
+        new.floors[floor].chips.update(current.floors[floor].chips)
+
     for gen in change.gens:
-        new[change.fro].gens[gen] = 0
-        new[change.to].gens[gen] = 1
+        new.floors[change.fro].gens.remove(gen)
+        new.floors[change.to].gens.add(gen)
 
     for chip in change.chips:
-        new[change.fro].chips[chip] = 0
-        new[change.to].chips[chip] = 1
+        new.floors[change.fro].chips.remove(chip)
+        new.floors[change.to].chips.add(chip)
 
     return new
 
 
+def pgen(g):
+    return chr(ord('A') + g)
+
+def pchip(c):
+    return chr(ord('a') + c)
+
 def print_building(level, building):
-    for idx, floor in enumerate(reversed(building)):
+    for idx, floor in enumerate(reversed(building.floors)):
         prefix = '*' if idx == floors - level - 1 else ' '
-        print(prefix, floor.gens, floor.chips)
+        pg = ''
+        for g in range(pairs):
+            ch = pgen(g) if g in floor.gens else ' '
+            pg += ch
+
+        pc = ''
+        for c in range(pairs):
+            ch = pchip(c) if c in floor.chips else ' '
+            pc += ch
+
+        print(prefix, pg, pc)
     print('===')
 
-def move():
-    building = [Floor(n) for _ in range(floors)]
+def print_chain(level, building):
+    chain = []
+    while True:
+        chain.append((level, building))
+        if not building.prev:
+            break
 
+        level, building = building.prev
+
+    for idx, (level, building) in enumerate(reversed(chain), start=1):
+        print(idx)
+        print_building(level, building)
+
+def move():
     # 0 promethium
     # 1 cobalt
     # 2 curium
     # 3 ruthenium
     # 4 plutonium
-    building[0].chips[0] = 1
-    building[0].gens[0] = 1
+    building = Building()
+    building.floors[0] = Floor(set([0]), set([0]))
+    building.floors[1] = Floor(set([1, 2, 3, 4]), set())
+    building.floors[2] = Floor(set(), set([1, 2, 3, 4]))
+    building.floors[3] = Floor(set(), set())
 
-    building[1].gens[1] = 1
-    building[1].gens[2] = 1
-    building[1].gens[3] = 1
-    building[1].gens[4] = 1
+    # building = Building()
+    # building.floors[0] = Floor(set([]), set([0, 1]))
+    # building.floors[1] = Floor(set([0]), set())
+    # building.floors[2] = Floor(set([1]), set())
+    # building.floors[3] = Floor(set(), set())
 
-    building[2].chips[1] = 1
-    building[2].chips[2] = 1
-    building[2].chips[3] = 1
-    building[2].chips[4] = 1
+    # building = Building()
+    # building.floors[0] = Floor(set([0, 1, 2]), set([0, 1, 2]))
+    # building.floors[1] = Floor(set([3, 4, 5, 6]), set())
+    # building.floors[2] = Floor(set(), set([3, 4, 5, 6]))
+    # building.floors[3] = Floor(set(), set())
 
     from collections import deque
     d = deque()
-    seen = []
+    seen = set()
     d.append((0, building))
-    seen.append((0, building))
+    seen.add((0, building))
 
     cnt = 0
     while d:
         l = len(d)
         for _ in range(l):
             level, building = d.popleft()
-            print_building(level, building)
+            # print_building(level, building)
 
-            if sum(building[-1].gens) == n and sum(building[-1].chips) == n:
+            if end(building):
+                print_chain(level, building)
                 return cnt
 
-            floor = building[level]
+            floor = building.floors[level]
             choices = list(possible(floor))
-            print("Choices ", len(choices))
             for p in choices:
                 p.fro = level
                 if level != floors - 1:  # go up
                     p.to = level + 1
                     new = apply(building, p)
-                    if valid(new) and (p.to, new) not in seen:
+                    if valid_building(new) and (p.to, new) not in seen:
                         d.append((p.to, new))
-                        seen.append((p.to, new))
+                        seen.add((p.to, new))
 
                 if level != 0:  # go down
                     p.to = level - 1
                     new = apply(building, p)
-                    if valid(new) and (p.to, new) not in seen:
+                    if valid_building(new) and (p.to, new) not in seen:
                         d.append((p.to, new))
-                        seen.append((p.to, new))
+                        seen.add((p.to, new))
 
         cnt += 1
-        print(cnt, len(d))
+        print('=' * 20, cnt, len(d), '=' * 20)
 
     return -1
 

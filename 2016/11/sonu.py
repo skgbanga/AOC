@@ -48,8 +48,10 @@ def prevstates(sc):
 # a state is stored as (pos, (tg1s), (tm1s), (tg2s), (tm2s) ....), where pos is elevator position, 
 # and tgs and tms are tuples of generators and microchips, stored in ascending order
 # set seen is used to store previously computed states, to save time and to keep the current set of all states setstates small 
-sinit = (1, (1, 2, 3), (1,), (), (2, 3), (4, 5), (4, 5), (), ())
+sinit = (1, (1,), (1,), (2, 3, 4, 5), (), (), (2, 3, 4, 5), (), ())
 sfinal = (4, (), (), (), (), (), (), (1, 2, 3, 4, 5), (1, 2, 3, 4, 5))
+# sinit = (1, (1, 6, 7,), (1, 6, 7), (2, 3, 4, 5), (), (), (2, 3, 4, 5), (), ())
+# sfinal = (4, (), (), (), (), (), (), (1, 2, 3, 4, 5, 6, 7), (1, 2, 3, 4, 5, 6, 7))
 
 seen = set()
 setstates = set([sfinal])

@@ -1,0 +1,205 @@
+1
+             
+         bcde
+   BCDE      
+* A     a    
+===
+2
+             
+         bcde
+* ABCDE a    
+             
+===
+3
+             
+*       abcde
+  ABCDE      
+             
+===
+4
+*        bc  
+        a  de
+  ABCDE      
+             
+===
+5
+          c  
+*       ab de
+  ABCDE      
+             
+===
+6
+*         cde
+        ab   
+  ABCDE      
+             
+===
+7
+           de
+*       abc  
+  ABCDE      
+             
+===
+8
+           de
+          c  
+* ABCDE ab   
+             
+===
+9
+           de
+*   CD    c  
+  AB  E ab   
+             
+===
+10
+           de
+    C     c  
+* AB DE ab   
+             
+===
+11
+           de
+*   CDE   c  
+  AB    ab   
+             
+===
+12
+*    DE    de
+    C     c  
+  AB    ab   
+             
+===
+13
+     D     d 
+*   C E   c e
+  AB    ab   
+             
+===
+14
+*   CDE    d 
+          c e
+  AB    ab   
+             
+===
+15
+    CDE      
+*         cde
+  AB    ab   
+             
+===
+16
+*   CDE   c e
+           d 
+  AB    ab   
+             
+===
+17
+    C E   c e
+*    D     d 
+  AB    ab   
+             
+===
+18
+    C E   c e
+           d 
+* AB D  ab   
+             
+===
+19
+    C E   c e
+*       ab d 
+  AB D       
+             
+===
+20
+    C E   c e
+        ab   
+* AB D     d 
+             
+===
+21
+    C E   c e
+* AB    ab   
+     D     d 
+             
+===
+22
+* ABC E   c e
+        ab   
+     D     d 
+             
+===
+23
+  ABC E     e
+*       abc  
+     D     d 
+             
+===
+24
+* ABC E ab  e
+          c  
+     D     d 
+             
+===
+25
+  AB  E ab  e
+*   C     c  
+     D     d 
+             
+===
+26
+  AB  E ab  e
+          c  
+*   CD     d 
+             
+===
+27
+  AB  E ab  e
+*   CD    c  
+           d 
+             
+===
+28
+* ABCDE ab  e
+          c  
+           d 
+             
+===
+29
+  AB DE ab  e
+*   C     c  
+           d 
+             
+===
+30
+* ABCDE abc e
+             
+           d 
+             
+===
+31
+  ABC E abc e
+*    D       
+           d 
+             
+===
+32
+  ABC E abc e
+             
+*    D     d 
+             
+===
+33
+  ABC E abc e
+*    D     d 
+             
+             
+===
+34
+* ABCDE abcde
+             
+             
+             
+===
+33
