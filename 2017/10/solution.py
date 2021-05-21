@@ -25,7 +25,6 @@ for _ in range(ROUNDS):
         current += l + skip
         skip += 1
 
-# print(nums[0] * nums[1])
 from more_itertools import chunked
 
 s = ""
